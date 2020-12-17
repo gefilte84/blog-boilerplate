@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 import { Context as BlogContext } from "../context/BlogContext";
 
 // useContext gjør at du får tilgang til value som du da kan bruke
@@ -15,30 +16,43 @@ import { Context as BlogContext } from "../context/BlogContext";
 // alltid keyExtractor. velg ut det som er unikt i blogpost. title i dette tilfelle
 // renderItem er en arrow funksjon (callback funksjon) som skal ha item. Item er en singel blogpost.
 // så return med text og hva innenfor objektet du ønsker. I dette tilfelle så skal vi ha item.title.
-const IndexScreen = () => {
-  const { state, addBlogPost, deleteBlogPost } = useContext(BlogContext);
+const IndexScreen = ({ navigation }) => {
+  const { state, deleteBlogPost } = useContext(BlogContext);
 
   return (
     <View>
-      <Button title="Add Post" onPress={addBlogPost} />
       <FlatList
         data={state}
         keyExtractor={(blogPost) => blogPost.title}
         renderItem={({ item }) => {
           return (
-            <View style={styles.row}>
-              <Text style={styles.title}>
-                {item.title} - {item.id}
-              </Text>
-              <TouchableOpacity onPress={() => deleteBlogPost(item.id)}>
-                <FontAwesome style={styles.icon} name="trash-o" />
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Show", { id: item.id })}
+            >
+              <View style={styles.row}>
+                <Text style={styles.title}>
+                  {item.title} - {item.id}
+                </Text>
+                <TouchableOpacity onPress={() => deleteBlogPost(item.id)}>
+                  <FontAwesome style={styles.icon} name="trash-o" />
+                </TouchableOpacity>
+              </View>
+            </TouchableOpacity>
           );
         }}
       />
     </View>
   );
+};
+
+IndexScreen.navigationOptions = ({ navigation }) => {
+  return {
+    headerRight: () => (
+      <TouchableOpacity onPress={() => navigation.navigate("Create")}>
+        <AntDesign name="plus" size={24} marginRight={10} />
+      </TouchableOpacity>
+    ),
+  };
 };
 
 const styles = StyleSheet.create({
