@@ -1,10 +1,9 @@
-import React, { useContext } from "react";
+import React, { useEffect, useContext } from "react";
 import {
   View,
   Text,
   StyleSheet,
   FlatList,
-  Button,
   TouchableOpacity,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
@@ -17,7 +16,12 @@ import { Context as BlogContext } from "../context/BlogContext";
 // renderItem er en arrow funksjon (callback funksjon) som skal ha item. Item er en singel blogpost.
 // så return med text og hva innenfor objektet du ønsker. I dette tilfelle så skal vi ha item.title.
 const IndexScreen = ({ navigation }) => {
-  const { state, deleteBlogPost } = useContext(BlogContext);
+  const { state, deleteBlogPost, getBlogPosts } = useContext(BlogContext);
+
+  // denne funksjonen gjør at vi kun spør om data fra api engang
+  useEffect(() => {
+    getBlogPosts();
+  }, []);
 
   return (
     <View>

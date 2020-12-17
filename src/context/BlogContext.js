@@ -1,4 +1,4 @@
-import React, { useReducer } from "react";
+import jsonServer from "../api/jsonServer";
 import createDataContext from "./createDataContext";
 
 // skal du legge til flere funksjoner så fører du det inn i reduceren og du lager funskjonen
@@ -7,6 +7,8 @@ import createDataContext from "./createDataContext";
 // filter itererer over alle elementene i state og kjører en child funksjon
 const blogReducer = (state, action) => {
   switch (action.type) {
+    case "get_blogposts":
+      return action.payload;
     case "edit_blogpost":
       // map iterer over blogpost array
       return state.map((blogPost) => {
@@ -28,7 +30,14 @@ const blogReducer = (state, action) => {
       return state;
   }
 };
+// henter posts fra jsonserver
+const getBlogPosts = (dispatch) => {
+  return async () => {
+    const response = await jsonServer.get("/blogposts");
 
+    dispatch({ type: "get_blogposts", payload: response.data });
+  };
+};
 // funksjon som modifiserer reducer
 // endrer data
 const addBlogPost = (dispatch) => {
@@ -57,6 +66,6 @@ const editBlogPost = (dispatch) => {
 // Provider gjør at vi kan ta data fra andre steder i appen
 export const { Context, Provider } = createDataContext(
   blogReducer,
-  { addBlogPost, deleteBlogPost, editBlogPost },
-  [{ title: "Test Post", content: "Test Content", id: "23456" }]
+  { addBlogPost, deleteBlogPost, editBlogPost, getBlogPosts },
+  [] // initial state er denne arrayen
 );
