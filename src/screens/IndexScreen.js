@@ -19,8 +19,17 @@ const IndexScreen = ({ navigation }) => {
   const { state, deleteBlogPost, getBlogPosts } = useContext(BlogContext);
 
   // denne funksjonen gjør at vi kun spør om data fra api engang
+  // og hver gang vi går til hovedskjermen så skal vi oppdatere listen igjen
   useEffect(() => {
     getBlogPosts();
+    // denne kjører når vi kommer tilbake til hovedskjermen
+    const listener = navigation.addListener("didFocus", () => {
+      getBlogPosts();
+    });
+    // hjelpe funkjson for å rydde listener. memory leak kan skje uten denne
+    return () => {
+      listener.remove();
+    };
   }, []);
 
   return (
